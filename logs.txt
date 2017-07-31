@@ -6831,3 +6831,4 @@ Attaching to couchdb0, ca_peerOrg1, couchdb1, ca_peerOrg2, orderer.example.com, 
 [34mpeer0.org1.example.com    |[0m [36m2017-07-12 14:31:51.460 UTC [eventhub_producer] validateEventMessage -> DEBU 7f6[0m ValidateEventMessage starts for signed event 0xc421626810
 [34mpeer0.org1.example.com    |[0m [36m2017-07-12 14:31:51.463 UTC [eventhub_producer] deRegisterHandler -> DEBU 7f7[0m deregistering event type: BLOCK
 [34mpeer0.org1.example.com    |[0m [36m2017-07-12 14:31:51.469 UTC [eventhub_producer] Chat -> DEBU 7f8[0m Received EOF, ending Chat
+Gracefully stopping... (press Ctrl+C again to force)
