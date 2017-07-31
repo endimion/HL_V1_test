@@ -45,6 +45,19 @@ Now, we will define the anchor peer for Org2 on the same channel:
 configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate ./channel-artifacts/Org2MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Org2MSP
 ```
 
+Edit the docker-compose file to point to the correct certificates:
+Point the env. variable FABRIC_CA_SERVER_CA_KEYFILE and FABRIC_CA_SERVER_TLS_KEYFILE to point to the correct file for the CA of each organisation:
+For example the should point at the file FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/602416110b867f05460fa401a377747a8713e82f6a39ce08b23d6df5ba78854c_sk
+this is done by setting the en. variable as follows:
+```
+FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/602416110b867f05460fa401a377747a8713e82f6a39ce08b23d6df5ba78854c_sk
+```
+because of how the local host folders are mounted to the container.
+```
+volumes:
+  - ./crypto-config/peerOrganizations/org1.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
+```
+
 Next, start the network (for deamon -d) consuming the docker-compose.yml config file:
 ```
 docker-compose -f docker-compose.yml up
