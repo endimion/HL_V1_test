@@ -65,3 +65,11 @@ docker-compose -f docker-compose.yml up
 Finally, the crypto-config folder, channel.tx, genesis.block, Org1MSPanchors.tx and Org2MSPanchors.tx need to
 be copied to the app to be able to access the certificates, channel  definition etc.
 (usually, these are copies a folder called artifacts in the root of the app)
+
+
+
+*******************************IMPORTANT*************************************************************************
+In the file base.yml the line:
+  - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=test0_default
+
+has to change to reflect the network the peers are running in!!!!!
