@@ -15,10 +15,10 @@ services:
       - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
       #- FABRIC_CA_SERVER_CA_NAME=ca1.example.com
       - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem
-      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/602416110b867f05460fa401a377747a8713e82f6a39ce08b23d6df5ba78854c_sk
+      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/aba6b38182886b52f3933500a133b378a149fafe2f3349d3463a38878fef4ff0_sk
       - FABRIC_CA_SERVER_TLS_ENABLED=true
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/602416110b867f05460fa401a377747a8713e82f6a39ce08b23d6df5ba78854c_sk
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/aba6b38182886b52f3933500a133b378a149fafe2f3349d3463a38878fef4ff0_sk
     ports:
       - "7054:7054"
     #command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/be9fc7d28466a86f14d5e60d2bb7fbd234763273518c7502b58bcbbc23d837d4_sk -b admin:adminpw -d'
@@ -35,10 +35,10 @@ services:
       - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
       #- FABRIC_CA_SERVER_CA_NAME=ca2.example.com
       - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org2.example.com-cert.pem
-      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/f8033bbdcb9846a3995d7551a2f8d81a2108973b7c9bdc1f96f145ff60a784db_sk
+      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/283ed9178ee76ea9b0cb29e9e7d393931986a29952ee7c1323702947275a6ea7_sk
       - FABRIC_CA_SERVER_TLS_ENABLED=true
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org2.example.com-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/f8033bbdcb9846a3995d7551a2f8d81a2108973b7c9bdc1f96f145ff60a784db_sk
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/283ed9178ee76ea9b0cb29e9e7d393931986a29952ee7c1323702947275a6ea7_sk
     ports:
       - "8054:7054"
     #command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/be9fc7d28466a86f14d5e60d2bb7fbd234763273518c7502b58bcbbc23d837d4_sk -b admin:adminpw -d'
