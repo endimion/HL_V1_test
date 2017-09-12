@@ -107,7 +107,6 @@ services:
         - /var/run/:/host/var/run/
     networks:
       - overnet
-    environment:
     ports:
       - 7051:7051
       - 7053:7053
