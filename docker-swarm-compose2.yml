@@ -1,0 +1,113 @@
+#
+# Copyright IBM Corp All Rights Reserved
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+
+docker network create --attachable --driver overlay overnet
+
+docker service create  --network="overnet" --name orderer_example_com -p 7050:7050 \
+-e ORDERER_GENERAL_LOGLEVEL=debug \
+-e ORDERER_GENERAL_LISTENADDRESS=0.0.0.0 \
+-e ORDERER_GENERAL_GENESISMETHOD=file \
+-e ORDERER_GENERAL_GENESISFILE=/etc/hyperledger/configtx/genesis.block \
+-e ORDERER_GENERAL_LOCALMSPID=OrdererMSP \
+-e ORDERER_GENERAL_LOCALMSPDIR=/etc/hyperledger/crypto/orderer/msp \
+-e ORDERER_GENERAL_TLS_ENABLED=true \
+-e ORDERER_GENERAL_TLS_PRIVATEKEY=/etc/hyperledger/crypto/orderer/tls/server.key \
+-e ORDERER_GENERAL_TLS_CERTIFICATE=/etc/hyperledger/crypto/orderer/tls/server.crt \
+-e CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=overnet \
+-e ORDERER_GENERAL_TLS_ROOTCAS='[/etc/hyperledger/crypto/orderer/tls/ca.crt,/etc/hyperledger/crypto/peerOrg1/tls/ca.crt,/etc/hyperledger/crypto/peerOrg2/tls/ca.crt]' \
+--mount type=bind,source=/root/HL_V1_test/channel-artifacts/,destination=/etc/hyperledger/configtx \
+--mount type=bind,source=/root/HL_V1_test/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/,destination=/etc/hyperledger/crypto/orderer \
+--mount type=bind,source=/root/HL_V1_test/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/,destination=/etc/hyperledger/crypto/peerOrg1 \
+--mount type=bind,source=/root/HL_V1_test/crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/,destination=/etc/hyperledger/crypto/peerOrg2 \
+-w /opt/gopath/src/github.com/hyperledger/fabric/orderer \
+hyperledger/fabric-orderer:x86_64-1.0.0 orderer
+
+
+
+
+
+docker service create --network="overnet" --link orderer_example_com:orderer.example.com --name ca_peerOrg1 -p 7054:7054 \
+-e FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server \
+-e FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem \
+-e FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/aba6b38182886b52f3933500a133b378a149fafe2f3349d3463a38878fef4ff0_sk \
+-e FABRIC_CA_SERVER_TLS_ENABLED=true \
+-e FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem \
+-e FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/aba6b38182886b52f3933500a133b378a149fafe2f3349d3463a38878fef4ff0_sk \
+--mount type=bind,source=/root/HL_V1_test/crypto-config/peerOrganizations/org1.example.com/ca/,destination=/etc/hyperledger/fabric-ca-server-config \
+hyperledger/fabric-ca:x86_64-1.0.0 fabric-ca-server start -b admin:adminpw -d
+
+
+
+
+docker run --rm  -it --network="overnet" --link orderer.example.com:orderer.example.com --name ca_peerOrg2 -p 8054:7054 \
+-e FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server \
+-e FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org2.example.com-cert.pem \
+-e FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/283ed9178ee76ea9b0cb29e9e7d393931986a29952ee7c1323702947275a6ea7_sk \
+-e FABRIC_CA_SERVER_TLS_ENABLED=true \
+-e FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org2.example.com-cert.pem \
+-e FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/283ed9178ee76ea9b0cb29e9e7d393931986a29952ee7c1323702947275a6ea7_sk \
+-v /root/HL_V1_test/crypto-config/peerOrganizations/org2.example.com/ca/:/etc/hyperledger/fabric-ca-server-config \
+hyperledger/fabric-ca:x86_64-1.0.0 fabric-ca-server start -b admin:adminpw -d
+
+
+
+docker run --rm  -it --network="overnet" --link orderer.example.com:orderer.example.com --name couchdb0 -p 5984:5984  \
+hyperledger/fabric-couchdb:x86_64-1.0.0
+
+
+docker run --rm  -it --network="overnet" --link orderer.example.com:orderer.example.com --name couchdb1 -p 6984:5984  \
+hyperledger/fabric-couchdb:x86_64-1.0.0
+
+
+
+docker run --rm  -it --network="overnet" --link orderer.example.com:orderer.example.com \
+--name peer0.org1.example.com -p 7051:7051 -p 7053:7053 --link couchdb0:couchdb0   \
+-e CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock \
+-e CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=overnet \
+-e CORE_LOGGING_LEVEL=DEBUG \
+-e CORE_PEER_GOSSIP_USELEADERELECTION=true \
+-e CORE_PEER_GOSSIP_ORGLEADER=false \
+-e CORE_PEER_GOSSIP_SKIPHANDSHAKE=true \
+-e CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/crypto/peer/msp \
+-e CORE_PEER_TLS_ENABLED=true \
+-e CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/crypto/peer/tls/server.key \
+-e CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/crypto/peer/tls/server.crt \
+-e CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/crypto/peer/tls/ca.crt \
+-e CORE_LEDGER_STATE_STATEDATABASE=CouchDB \
+-e CORE_PEER_ID=peer0.org1.example.com \
+-e CORE_PEER_LOCALMSPID=Org1MSP \
+-e CORE_PEER_ADDRESS=peer0.org1.example.com:7051 \
+-e CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb0:5984 \
+-w /opt/gopath/src/github.com/hyperledger/fabric/peer \
+-v /var/run/:/host/var/run/ \
+-v /root/HL_V1_test/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/:/etc/hyperledger/crypto/peer \
+hyperledger/fabric-peer:x86_64-1.0.0 peer node start
+
+
+
+docker run --rm  -it --network="overnet" --link orderer.example.com:orderer.example.com \
+--name peer0.org2.example.com -p 8051:7051 -p 8053:7053 --link couchdb1:couchdb1   \
+-e CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock \
+-e CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=overnet \
+-e CORE_LOGGING_LEVEL=DEBUG \
+-e CORE_PEER_GOSSIP_USELEADERELECTION=true \
+-e CORE_PEER_GOSSIP_ORGLEADER=false \
+-e CORE_PEER_GOSSIP_SKIPHANDSHAKE=true \
+-e CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/crypto/peer/msp \
+-e CORE_PEER_TLS_ENABLED=true \
+-e CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/crypto/peer/tls/server.key \
+-e CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/crypto/peer/tls/server.crt \
+-e CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/crypto/peer/tls/ca.crt \
+-e CORE_LEDGER_STATE_STATEDATABASE=CouchDB \
+-e CORE_PEER_ID=peer0.org2.example.com \
+-e CORE_PEER_LOCALMSPID=Org2MSP \
+-e CORE_PEER_ADDRESS=peer0.org2.example.com:7051 \
+-e CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb1:5984 \
+-w /opt/gopath/src/github.com/hyperledger/fabric/peer \
+-v /var/run/:/host/var/run/ \
+-v /root/HL_V1_test/crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/:/etc/hyperledger/crypto/peer \
+hyperledger/fabric-peer:x86_64-1.0.0 peer node start

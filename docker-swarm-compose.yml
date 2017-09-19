@@ -28,6 +28,9 @@ services:
     container_name: ca_peerOrg1
     networks:
       - overnet
+    deploy:
+      placement:
+        constraints: [node.role == worker]
 
   ca.org2.example.com:
     image: hyperledger/fabric-ca:x86_64-1.0.0 #x86_64-1.0.0-rc1 #x86_64-1.0.0-beta
@@ -48,6 +51,10 @@ services:
     container_name: ca_peerOrg2
     networks:
       - overnet
+    deploy:
+      placement:
+        constraints: [node.role == worker]
+
 
   orderer.example.com:
     container_name: orderer.example.com
@@ -74,6 +81,10 @@ services:
         - ./crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/:/etc/hyperledger/crypto/peerOrg2
     networks:
       - overnet
+    deploy:
+      placement:
+        constraints: [node.role == worker]
+
 
   peer0.org1.example.com:
     container_name: peer0.org1.example.com
@@ -115,7 +126,9 @@ services:
     depends_on:
       - orderer.example.com
       - couchdb0
-
+    deploy:
+      placement:
+        constraints: [node.role == manager]
 
   #added by nikos second peer beloging to org2
   peer0.org2.example.com:
@@ -159,7 +172,9 @@ services:
     depends_on:
       - orderer.example.com
       - couchdb1
-
+    deploy:
+      placement:
+        constraints: [node.role == worker]
 
 
   couchdb0:
