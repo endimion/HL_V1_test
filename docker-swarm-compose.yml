@@ -38,6 +38,9 @@ services:
       hyp-net:
         aliases:
           - ca_peerOrg1
+    deploy:
+      placement:
+        constraints: [node.role == worker]
 
 
   ca_org2_example_com:
@@ -64,7 +67,9 @@ services:
       hyp-net:
         aliases:
           - ca_peerOrg2
-
+    deploy:
+      placement:
+        constraints: [node.role == worker]
 
   orderer_example_com:
 #    container_name: orderer.example.com
@@ -97,7 +102,9 @@ services:
       hyp-net:
         aliases:
           - orderer.example.com
-
+    deploy:
+      placement:
+        constraints: [node.role == worker]
 
   peer0_org1_example_com:
 #    container_name: peer0.org1.example.com
@@ -144,7 +151,9 @@ services:
     depends_on:
       - orderer_example_com
       - couchdb0
-
+    deploy:
+      placement:
+        constraints: [node.role == manager]
 
   #added by nikos second peer beloging to org2
   peer0_org2_example_com:
@@ -191,7 +200,9 @@ services:
     depends_on:
       - orderer_example_com
       - couchdb1
-
+    deploy:
+      placement:
+        constraints: [node.role == worker]
 
 
   couchdb0:
