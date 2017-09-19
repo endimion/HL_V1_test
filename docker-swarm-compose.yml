@@ -240,3 +240,4 @@ services:
     networks:
       hyp-net:
         aliases:
+          - couchdb1
