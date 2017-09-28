@@ -1,0 +1,11 @@
+version: '2'
+services:
+ 
+  postfix:
+    container_name: postfix
+    image: catatnight/postfix
+    ports:
+      - 25:25
+    environment:
+      - maildomain=ds.aegean.com
+      - smtp_user=user:pwd
